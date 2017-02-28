@@ -9,7 +9,7 @@ android系统不像其他的编程应用一样用main()方法开始，而是在a
 
     1.当用户在使用你的app的时候收到电话或者用户切换到别的app的时候不会崩溃.
     2.当用户不是正在使用你的app的时候不浪费有价值的系统资源.
-    3.如果用不离开你的app再返回你的app的时候不关闭用户的使用进度.
+    3.如果用户不离开你的app再返回你的app的时候不关闭用户的使用进度.
     4.当屏幕在landscape和portrait之间(横竖屏)切换的时候不会崩溃或失去用户的进度.
 在接下来的学习中我们将知道，Activity在各种不同的状态之间切换的时候有好几种情形。然而，只有三种状态是静态的，也就是说，activity可以在这三个状态可以长时间停留。
 	
@@ -17,7 +17,7 @@ android系统不像其他的编程应用一样用main()方法开始，而是在a
 	    在这种状态，activity在前台并且可以和用户交互(有时也称作“运行”状态)
 	Paused(暂停状态)
 	    在这种状态，activity是被另一个activity挡住一部分的，这挡住它的activity是半透明的或者没有覆盖整个屏幕，暂停的activity不能接收用户的指令也不能执行任何代码.
-	Stopped(停滞状态)
+	Stopped(停止状态)
 	    在这种状态，activity完全被隐藏，且对用户是不可见的，它被认为是在后台运行，当进入stopped状态时，activity实例和所有的状态信息比如成员变量都被保存起来了，但是它也不能执行任何代码. 
 其他的状态(Created 和Started)都是很短暂的状态，系统很快的通过调用生命周期的方法来从他们跳转到下一个状态，系统调用onCreate之后，会马上调用onStart, 紧接着就是onResume了.以上就是基本的activity生命周期，现在我们将来学习特殊的生命周期行为了.
 ###指定App的默认启动Activity
@@ -30,9 +30,13 @@ android系统不像其他的编程应用一样用main()方法开始，而是在a
 	</activity>
 注意：在新建的android项目中默认有一个activity是app的入口activity. 如果你的所有的activity都是要么没有Main action或者LAUNCHER category,或者两者都没有，那么你的app图标将不会出现在在主屏app列表中.
 ###创造一个实例
-####大多数包含多个activity的app允许用户表现不同的action，无论你的activity是程序的主入口(点击app图标进入的activity)还是回应用户action打开的activity，系统将通过onCreate()方法创造这个activity的实例. 
-####你必须重写onCreate方法来执行基本的应用启动逻辑，这只在activity的生命周期中执行一次，例如，你重写onCreate方法应该定义用户界面和实例化类范围内的变量.
-####例如，接下来的onCreate()方法的实例向我们展示了执行基本的activity启动的一些代码，比如定义用户界面（xml布局文件中定义的），定义成员变量，配置一部分UI.
+
+大多数包含多个activity的app允许用户表现不同的action，无论你的activity是程序的主入口(点击app图标进入的activity)还是回应用户action打开的activity，系统将通过onCreate()方法创造这个activity的实例. 
+
+你必须重写onCreate方法来执行基本的应用启动逻辑，这只在activity的生命周期中执行一次，例如，你重写onCreate方法应该定义用户界面和实例化类范围内的变量.
+
+例如，接下来的onCreate()方法的实例向我们展示了执行基本的activity启动的一些代码，比如定义用户界面（xml布局文件中定义的），定义成员变量，配置一部分UI.
+
 	TextView mTextView; // Member variable for text view in the layout
 	
 	@Override
@@ -55,7 +59,7 @@ android系统不像其他的编程应用一样用main()方法开始，而是在a
 	    }
 	}
 注意：使用SDK_INT来防止旧版本的系统执行新版本系统的代码，这部分代码在Android 2.0 (sdk = 5)及以上是好使的，旧版本系统执行这段代码会出现runtime异常.
-####一旦onCreate()方法执行完毕，系统将马上调用onStart()和onResume(),你的Activity绝不会在Created或者Started状态下停留，理论上说，activity在onStart()被调用后市可视的，但onResume()方法会马上跟着执行且actvity会停留在Resumed状态除非有东西或者时间改变了它，比如来电话了，用户打开了另外一个activity或者屏幕关闭了.
+####一旦onCreate()方法执行完毕，系统将马上调用onStart()和onResume(),你的Activity绝不会在Created或者Started状态下停留，理论上说，activity在onStart()被调用后是可视的，但onResume()方法会马上跟着执行且actvity会停留在Resumed状态除非有东西或者事件改变了它，比如来电话了，用户打开了另外一个activity或者屏幕关闭了.
 
 ####在接来的课程中,你将会看到其他的生命周期方法，onStart()和onResume()方法在当你的activity的状态需要从Paused或者Stopped状态中恢复的时候的作用。 
 ####注意：onCreate()方法包含一个参数savedInstanceState，我们将在后面的课程中关于重建一个activity的时候来讨论.
@@ -167,7 +171,7 @@ Antivity提供了2个生命周期方法，onStop() 和 onRestart(),这两个方�
 
 ###开始/重新开始 Activity
 
-当我们的actvity从stopped状态来到前台，它收到了onRestart()方法的回调，系统同时会调用onStart() 方法)onStart()方法在每次activity变成可视状态都会调用，要么在onRestart()之后执行，要么在onCreat()之后执行)，然而onRestart() 方法,只有当activity从stopped状态恢复时会被调用，所以你能使用它来执行特殊的复原工作，这也许是必须的工作仅当activity先前已经被停止了但还没有被销毁的时候.
+当我们的actvity从stopped状态来到前台，它收到了onRestart()方法的回调，系统同时会调用onStart() 方法，onStart()方法在每次activity变成可视状态都会调用，要么在onRestart()之后执行，要么在onCreat()之后执行，然而onRestart() 方法,只有当activity从stopped状态恢复时会被调用，所以你能使用它来执行特殊的复原工作，这也许是必须的工作仅当activity先前已经被停止了但还没有被销毁的时候.
 
 app需要使用onRestart()来存储activity状态这件事是不寻常的，所有对这个方法应用到一般的app没有任何的准则，然而因为你的onStop() 方法应该基本清除所有你的activity的资源，你将需要在acticity重新开始的时候重新实例化他们，不得不说的还有，你也需要在首次创建activity（内存中没有activity的实例）的时候实例化他们. 因为这个原因， 你应该经常使用onStart() 回调方法作为onStop()方法的对应方法, 因为系统在创建activity和restart activity的时候都会调用onStart()方法.
 
@@ -202,15 +206,15 @@ app需要使用onRestart()来存储activity状态这件事是不寻常的，所�
 
 ##重新创建一个Activity
 
-有许多你的activity因为正常的app行为被销毁的场景，例如当用户按下了返回按钮或者你的activity通过调用finish()发信号销毁自己, 系统也有可能会在activity处于stopped状态并且很长一段时间没有被使用的时候销毁activity，或者前台activity需要更多的资源所以系统不得不关机后台进程来恢复内存.
+有许多你的activity因为正常的app行为被销毁的场景，例如当用户按下了返回按钮或者你的activity通过调用finish()发信号销毁自己, 系统也有可能会在activity处于stopped状态并且很长一段时间没有被使用的时候销毁activity，或者前台activity需要更多的资源所以系统不得不关闭后台进程来恢复内存.
 
 当你的activity因为用户按下返回按钮被销毁或者activity自己关闭自己，在系统看来因为这些行为导致的activity实例永远消失了，这代表着activity不再被需要了，然而，如果系统销毁因为系统约束销毁了activity（而不是正常的app行为），则尽管真实的activity实例确实消失了，系统记得它存在过，这使得如果用户再返回这个activity，系统会使用保存好的数据（activity被销毁时保存的）创建一个新的activity的实例.
 这些系统把他们用来复原先前的状态的数据也被称为“实例化状态”，它是存储在Bundle对象中的键值对.
 
-注意：你的activity将会在你旋转屏幕的时候被销毁然后重建，当你的屏幕改变了方向。系统将会销毁并重建前台activity因为屏幕特征已经改变了而且你的activity也许需要去加载对应的与原来不一眼的资源（比如说layout布局）.
+注意：你的activity将会在你旋转屏幕的时候被销毁然后重建，当你的屏幕改变了方向。系统将会销毁并重建前台activity因为屏幕特征已经改变了而且你的activity也许需要去加载对应的与原来不一样的资源（比如说layout布局）.
 
 
-默认地，系统使用Bundle实例化状态来保存你的activity布局中的View对象的信息（比如EditText对象中的text文本值），所以如果你的activity实例被销毁并且重建，布局的状态被自动恢复到它先前的状态，然而，你的activity也许有更多的你想恢复的状态信息，比如actiivty中追踪用户进度的成员变量.
+默认地，系统使用Bundle实例化状态来保存你的activity布局中的View对象的信息（比如EditText对象中的text文本值），所以如果你的activity实例被销毁并且重建，布局的状态被自动恢复到它先前的状态，然而，你的activity也许有更多的你想恢复的状态信息，比如activity中追踪用户进度的成员变量.
 
 注意：为了使android系统恢复你的activity中所有view的状态，每个view必须拥有一个唯一的ID，用 android:id 这个属性来设置.
 
